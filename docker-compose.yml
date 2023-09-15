@@ -1,0 +1,56 @@
+version: '3.7'
+services:
+  mongodb:
+    image: bitnami/mongodb:5.0-debian-11
+    environment:
+      MONGODB_ROOT_USERNAME: root
+      MONGODB_ROOT_PASSWORD: rootpassword
+      MONGODB_USERNAME: user
+      MONGODB_PASSWORD: password
+      MONGODB_DATABASE: database
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/database --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 8s
+    volumes:
+      - mongodb_data_container:/data/db
+
+  redis:
+    image: 'bitnami/redis:7.0'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    volumes:
+      - 'redis_data:/bitnami/redis/data'
+
+  api:
+    image: cosmtrek/air
+    working_dir: /api
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: always
+    command:
+      - start
+      - --port=8282
+    ports:
+      - "8282:8282"
+    volumes:
+      - ./:/api/
+
+volumes:
+  mongodb_data_container:
+  redis_data:
