@@ -46,6 +46,7 @@ services:
     command:
       - start
       - --port=8282
+      - --mongo-uri=mongodb://user:password@mongodb:27017/database
     ports:
       - "8282:8282"
     volumes:

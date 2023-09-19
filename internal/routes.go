@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ingvaar/indeks/internal/helper"
+	"github.com/ingvaar/indeks-api/internal/helper"
 	"github.com/rs/zerolog/hlog"
 	"github.com/rs/zerolog/log"
 )

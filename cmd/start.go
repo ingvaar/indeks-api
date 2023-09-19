@@ -4,7 +4,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/ingvaar/indeks/internal"
+	"github.com/ingvaar/indeks-api/internal"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
