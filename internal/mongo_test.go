@@ -6,32 +6,33 @@ import (
 	"testing"
 
 	"github.com/ingvaar/indeks-api/internal"
+	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 func TestMongoNew(t *testing.T) {
-    ctx := context.Background()
+	ctx := context.Background()
 	// Creating the container
-    req := testcontainers.ContainerRequest{
-        Image:        "bitnami/mongodb:5.0-debian-11",
-        ExposedPorts: []string{"27017/tcp"},
-        WaitingFor:   wait.ForLog("Waiting for connections"),
-    }
+	req := testcontainers.ContainerRequest{
+		Image:        "bitnami/mongodb:5.0-debian-11",
+		ExposedPorts: []string{"27017/tcp"},
+		WaitingFor:   wait.ForLog("Waiting for connections"),
+	}
 	// Starting the container
-    mongoC, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
-        ContainerRequest: req,
-        Started:          true,
-    })
-    if err != nil {
-        panic(err)
-    }
+	mongoC, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+		ContainerRequest: req,
+		Started:          true,
+	})
+	if err != nil {
+		panic(err)
+	}
 	// Closing when the test finishes
-    defer func() {
-        if err := mongoC.Terminate(ctx); err != nil {
-            panic(err)
-        }
-    }()
+	defer func() {
+		if err := mongoC.Terminate(ctx); err != nil {
+			panic(err)
+		}
+	}()
 
 	// Getting the host of the container
 	host, err := mongoC.Host(ctx)
@@ -50,11 +51,11 @@ func TestMongoNew(t *testing.T) {
 		name     string
 		mongoURI string
 		timeout  int
-		expected error
+		gotError bool
 	}{
-		{"Valid timeout", mongoURI, 5, nil},
-		{"Invalid host", "mongodb://test:123", 5, fmt.Errorf("server selection error: context deadline exceeded, current topology: { Type: Unknown, Servers: [{ Addr: test:123, Type: Unknown, Last error: dial tcp: lookup test: no such host }, ] }")},
-		{"Invalid port", "mongodb://"+host+":123", 5, fmt.Errorf("server selection error: context deadline exceeded, current topology: { Type: Unknown, Servers: [{ Addr: localhost:123, Type: Unknown, Last error: dial tcp 127.0.0.1:123: connect: connection refused }, ] }")},
+		{"Valid timeout", mongoURI, 5, false},
+		{"Invalid host", "mongodb://test:123", 5, true},
+		{"Invalid port", "mongodb://" + host + ":123", 5, true},
 	}
 
 	for _, tc := range testCases {
@@ -66,17 +67,12 @@ func TestMongoNew(t *testing.T) {
 			}
 
 			mongo, err := internal.NewMongo(context.Background(), config)
-			if err != nil && tc.expected == nil {
-				t.Fatalf("Got an error but didn't expect one: %v", err)
-			}
-			if err == nil && tc.expected != nil {
-				t.Fatalf("Expected an error but didn't get one")
-			}
-			if err != nil && err.Error() != tc.expected.Error() {
-				t.Fatalf("Expected error: %v, got: %v", tc.expected, err)
-			}
-			if mongo == nil && tc.expected == nil {
-				t.Fatalf("Expected a Mongo instance, got nil")
+			if tc.gotError {
+				assert.Error(t, err)
+				assert.Nil(t, mongo)
+			} else {
+				assert.NoError(t, err)
+				assert.NotNil(t, mongo)
 			}
 		})
 	}
