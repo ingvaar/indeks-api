@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/ingvaar/indeks-api/internal/helper"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog/hlog"
 	"github.com/rs/zerolog/log"
 )
@@ -37,10 +38,10 @@ func (s Server) initMiddleware() {
 }
 
 func (s Server) initRoutes() {
-	s.router.POST("/link", func(c *gin.Context) {
-		c.AbortWithStatus(501)
+	s.router.GET("/health", func(c *gin.Context) {
+		c.Status(http.StatusOK)
 	})
-	s.router.GET("/link", func(c *gin.Context) {
-		c.AbortWithStatus(501)
+	s.router.GET("/metrics", func(c *gin.Context) {
+		promhttp.Handler().ServeHTTP(c.Writer, c.Request)
 	})
 }
