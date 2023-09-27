@@ -2,7 +2,6 @@ package internal
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ingvaar/indeks-api/internal/helper"
@@ -22,19 +21,7 @@ func (s Server) initMiddleware() {
 			hlog.RequestIDHandler("req-id", "Request-Id"),
 		),
 	)
-	s.router.Use(
-		helper.ConvertHandlerToGinHandler(
-			hlog.AccessHandler(func(r *http.Request, status, size int, duration time.Duration) {
-				hlog.FromRequest(r).Info().
-					Str("method", r.Method).
-					Stringer("url", r.URL).
-					Int("status", status).
-					Int("size", size).
-					Dur("duration", duration).
-					Msg("")
-			}),
-		),
-	)
+	s.router.Use(accessLoggerMiddleware())
 }
 
 func (s Server) initRoutes() {
