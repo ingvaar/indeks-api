@@ -14,11 +14,11 @@ func accessLoggerMiddleware() gin.HandlerFunc {
 		c.Next()
 
 		hlog.FromRequest(c.Request).Info().
-					Str("method", c.Request.Method).
-					Stringer("url", c.Request.URL).
-					Int("status", c.Writer.Status()).
-					Int("size", c.Writer.Size()).
-					Dur("duration", time.Now().UTC().Sub(timeStart)).
-					Msg("")
+			Str("method", c.Request.Method).
+			Stringer("url", c.Request.URL).
+			Int("status", c.Writer.Status()).
+			Int("size", c.Writer.Size()).
+			Dur("duration", time.Now().UTC().Sub(timeStart)).
+			Msg("")
 	}
 }
