@@ -5,6 +5,7 @@ import (
 	"os/signal"
 
 	"github.com/ingvaar/indeks-api/internal"
+
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -13,7 +14,7 @@ const (
 	flagPort     = "port"
 	flagTimeout  = "timeout"
 	flagMongoURI = "mongo-uri"
-	flagDevMode = "dev"
+	flagDevMode  = "dev"
 )
 
 // NewStartCmd creates a new instance of the start command.
