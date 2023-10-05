@@ -13,6 +13,7 @@ const (
 	flagPort     = "port"
 	flagTimeout  = "timeout"
 	flagMongoURI = "mongo-uri"
+	flagDevMode = "dev"
 )
 
 // NewStartCmd creates a new instance of the start command.
@@ -49,6 +50,7 @@ func NewStartCmd() *cobra.Command {
 		"mongodb://localhost:27017",
 		"MongoDB connection URI",
 	)
+	startCmd.PersistentFlags().BoolVarP(&config.DevMode, flagDevMode, "d", false, "Enable dev mode with additional debug")
 
 	return startCmd
 }
