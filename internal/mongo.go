@@ -39,6 +39,11 @@ func NewMongo(ctx context.Context, config Config) (*Mongo, error) {
 	return &Mongo{client}, nil
 }
 
+// GetClient returns a *mongo.Client.
+func (m *Mongo) GetClient() any {
+	return m.client
+}
+
 // Disconnect the database.
 func (m *Mongo) Disconnect(ctx context.Context) error {
 	return m.client.Disconnect(ctx)

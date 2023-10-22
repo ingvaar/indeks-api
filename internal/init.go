@@ -17,6 +17,7 @@ type Config struct {
 // Database defines the Database struct.
 type Database interface {
 	Disconnect(context.Context) error
+	GetClient() any
 }
 
 // New creates a new server with provided config.
