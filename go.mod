@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/rs/zerolog v1.31.0
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	go.mongodb.org/mongo-driver v1.12.1
 	golang.org/x/sync v0.5.0
 )
